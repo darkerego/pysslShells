@@ -1,4 +1,4 @@
-from __future__ import print_function
+#from __future__ import print_function
 import socket
 import sys
 import ssl
@@ -18,7 +18,7 @@ def socket_create():
         host = ''
         port = 9999
         s = socket.socket()
-        s = ssl.wrap_socket(s, certfile='ssl.crt', keyfile='ssl.key', ssl_version=ssl.PROTOCOL_TLSv1)
+        s = ssl.wrap_socket(s, certfile='../ssl/server.crt', keyfile='../ssl/server.key', ssl_version=ssl.PROTOCOL_TLSv1)
     except socket.error as msg:
         print("Socket creation error: " + str(msg))
 
@@ -48,15 +48,21 @@ def socket_accept():
 # Send commands
 def send_commands(conn):
     while True:
-        cmd = raw_input()
-        if cmd == 'quit':
+        try:
+            cmd = input()
+            if cmd == 'quit':
+                conn.send(str.encode('quit'))
+                conn.close()
+                s.close()
+                sys.exit()
+            if len(str.encode(cmd)) > 0:
+                conn.send(str.encode(cmd))
+                client_response = str(conn.recv(1024).decode())
+                print(client_response, end="")
+        except KeyboardInterrupt:
+            conn.send(str.encode('quit'))
             conn.close()
-            s.close()
-            sys.exit()
-        if len(str.encode(cmd)) > 0:
-            conn.send(str.encode(cmd))
-            client_response = str(conn.recv(1024))
-            print(client_response, end="")
+
 
 
 def main():

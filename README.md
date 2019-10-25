@@ -1,7 +1,14 @@
 # pysslShells
 Finally, reverse/bind shells written in python, encrypted with ssl!
 
-Why don't one of you stargazers write a bind shell now?
+### Updated (October 25th, 2019)
+
+- Ported code from python2 to python3
+- Fixed a bunch of errors and glitches
+- Better logic for creating and managing ssl keys
+- TODO: Write bind shell
+
+
 
 Tips are super appreciated ... 
 
