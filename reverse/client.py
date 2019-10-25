@@ -7,7 +7,7 @@ import os
 import socket
 import subprocess
 import ssl
-
+from sys import exit
 
 # Create a socket
 def socket_create():

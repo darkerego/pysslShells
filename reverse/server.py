@@ -5,6 +5,7 @@ import sys
 import ssl
 cmd = ""
 
+
 def socket_create():
     try:
         global host
