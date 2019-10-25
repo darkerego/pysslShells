@@ -1,15 +1,10 @@
-#from __future__ import print_function
+#!/usr/bin/env python3
+# PySslShell Reverse Shell Server ~ Author: Darkerego <https://github.com/darkerego>
 import socket
 import sys
 import ssl
 cmd = ""
-#from openssl import *
-#from __future__ import print_function
 
-#context = ssl.context(SSL.SSLv23_METHOD)
-#context.use_privatekey_file('ssl.key')
-#context.use_certificate_file('ssl.cert')
-# Create socket (allows two computers to connect)
 def socket_create():
     try:
         global host
@@ -30,8 +25,13 @@ def socket_bind():
         global port
         global s
         print("Binding socket to port: " + str(port))
-        s.bind((host, port))
-        s.listen(5)
+        try:
+            s.bind((host, port))
+        except OSError:
+            print('Address already in use, quitting...')
+            exit(1)
+        else:
+            s.listen(5)
     except socket.error as msg:
         print("Socket binding error: " + str(msg) + "\n" + "Retrying...")
         socket_bind()
