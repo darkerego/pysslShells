@@ -1,6 +1,11 @@
 # pysslShells
 Finally, reverse/bind shells written in python, encrypted with ssl!
 
+### Update (October 28th, 2019)
+
+- Added SSL bindshell and handler! 
+
+
 ### Updated (October 25th, 2019)
 
 - Ported server code to python3 (payload works with either python2 or python3)
