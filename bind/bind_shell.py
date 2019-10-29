@@ -11,11 +11,11 @@ try:
     try:
         port = int(sys.argv[2])
     except:
-        port = 5600
+        port = 9999
     try:
         ip = sys.argv[1]
     except:
-        ip = "127.0.0.1"
+        ip = "0.0.0.0"
 
     host = (ip, port)
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
