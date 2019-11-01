@@ -1,6 +1,10 @@
 # pysslShells
 Finally, reverse/bind shells written in python, encrypted with ssl!
 
+### See also:
+Password protected ssl shells (sha256 via hashlib):
+https://github.com/darkerego/py_password_ssl_shells
+
 ### Update (October 28th, 2019)
 
 - Added SSL bindshell and handler! 
